@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
-using QifApi.Transactions;
 using System.IO;
-using QifApi.Logic;
-using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Text.RegularExpressions;
+using QifApi.Logic;
+using QifApi.Transactions;
 
 namespace QifApi
 {
@@ -163,6 +164,17 @@ namespace QifApi
         }
 
         /// <summary>
+        /// Exports the current instance properties to the specified file.
+        /// </summary>
+        /// <param name="stream">Stream</param>
+        /// <param name="encoding">Encoding</param>
+        public void ExportStream(Stream stream, Encoding encoding = null)
+        {
+            encoding = encoding ?? Encoding.UTF8;
+            ExportStream(this, stream, encoding);
+        }
+
+        /// <summary>
         /// Exports the specified instance properties to the specified file.
         /// </summary>
         /// <param name="qif">The <seealso cref="T:QifDom"/> to export.</param>
@@ -176,6 +188,33 @@ namespace QifApi
             }
 
             using (StreamWriter writer = new StreamWriter(fileName))
+            {
+                writer.AutoFlush = true;
+
+                AccountListLogic.Export(writer, qif.AccountListTransactions);
+                AssetLogic.Export(writer, qif.AssetTransactions);
+                BankLogic.Export(writer, qif.BankTransactions);
+                CashLogic.Export(writer, qif.CashTransactions);
+                CategoryListLogic.Export(writer, qif.CategoryListTransactions);
+                ClassListLogic.Export(writer, qif.ClassListTransactions);
+                CreditCardLogic.Export(writer, qif.CreditCardTransactions);
+                InvestmentLogic.Export(writer, qif.InvestmentTransactions);
+                LiabilityLogic.Export(writer, qif.LiabilityTransactions);
+                MemorizedTransactionListLogic.Export(writer, qif.MemorizedTransactionListTransactions);
+            }
+        }
+
+        /// <summary>
+        /// Exports the specified instance properties to the provided stream.
+        /// </summary>
+        /// <param name="qif">The <seealso cref="T:QifDom"/> to export.</param>
+        /// <param name="fileName">Name of the file.</param>
+        /// <remarks>This will overwrite an existing file.</remarks>
+        public static void ExportStream(QifDom qif, Stream stream, Encoding encoding = null)
+        {
+            encoding = encoding ?? Encoding.UTF8;
+
+            using (StreamWriter writer = new StreamWriter(stream, encoding, 512, true))
             {
                 writer.AutoFlush = true;
 
@@ -256,6 +295,7 @@ namespace QifApi
 
                             // All done
                             break;
+
                         case Headers.AccountList:
                             // Increment the array counter
                             i++;
@@ -268,6 +308,7 @@ namespace QifApi
 
                             // All done
                             break;
+
                         case Headers.Asset:
                             // Increment the array counter
                             i++;
@@ -280,6 +321,7 @@ namespace QifApi
 
                             // All done
                             break;
+
                         case Headers.Cash:
                             // Increment the array counter
                             i++;
@@ -292,6 +334,7 @@ namespace QifApi
 
                             // All done
                             break;
+
                         case Headers.CategoryList:
                             // Increment the array counter
                             i++;
@@ -304,6 +347,7 @@ namespace QifApi
 
                             // All done
                             break;
+
                         case Headers.ClassList:
                             // Increment the array counter
                             i++;
@@ -316,6 +360,7 @@ namespace QifApi
 
                             // All done
                             break;
+
                         case Headers.CreditCard:
                             // Increment the array counter
                             i++;
@@ -328,6 +373,7 @@ namespace QifApi
 
                             // All done
                             break;
+
                         case Headers.Investment:
                             // Increment the array counter
                             i++;
@@ -340,6 +386,7 @@ namespace QifApi
 
                             // All done
                             break;
+
                         case Headers.Liability:
                             // Increment the array counter
                             i++;
@@ -352,6 +399,7 @@ namespace QifApi
 
                             // All done
                             break;
+
                         case Headers.MemorizedTransactionList:
                             // Increment the array counter
                             i++;
@@ -364,6 +412,7 @@ namespace QifApi
 
                             // All done
                             break;
+
                         default:
                             // Don't do any processing
                             break;
