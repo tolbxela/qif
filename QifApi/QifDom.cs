@@ -208,7 +208,8 @@ namespace QifApi
         /// Exports the specified instance properties to the provided stream.
         /// </summary>
         /// <param name="qif">The <seealso cref="T:QifDom"/> to export.</param>
-        /// <param name="fileName">Name of the file.</param>
+        /// <param name="stream">Stream.</param>
+        /// <param name="encoding">Encoding.</param>
         /// <remarks>This will overwrite an existing file.</remarks>
         public static void ExportStream(QifDom qif, Stream stream, Encoding encoding = null)
         {
