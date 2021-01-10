@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -168,10 +169,12 @@ namespace QifApi
         /// </summary>
         /// <param name="stream">Stream</param>
         /// <param name="encoding">Encoding</param>
-        public void ExportStream(Stream stream, Encoding encoding = null)
+        /// <param name="culture">CultureInfo.</param>
+        public void ExportStream(Stream stream, Encoding encoding = null, CultureInfo culture = null)
         {
             encoding = encoding ?? Encoding.UTF8;
-            ExportStream(this, stream, encoding);
+            culture = culture ?? CultureInfo.CurrentCulture;
+            ExportStream(this, stream, encoding, culture);
         }
 
         /// <summary>
@@ -210,10 +213,11 @@ namespace QifApi
         /// <param name="qif">The <seealso cref="T:QifDom"/> to export.</param>
         /// <param name="stream">Stream.</param>
         /// <param name="encoding">Encoding.</param>
-        /// <remarks>This will overwrite an existing file.</remarks>
-        public static void ExportStream(QifDom qif, Stream stream, Encoding encoding = null)
+        /// <param name="culture">CultureInfo.</param>
+        public static void ExportStream(QifDom qif, Stream stream, Encoding encoding = null, CultureInfo culture = null)
         {
             encoding = encoding ?? Encoding.UTF8;
+            culture = culture ?? CultureInfo.CurrentCulture;
 
             using (StreamWriter writer = new StreamWriter(stream, encoding, 512, true))
             {
@@ -221,7 +225,7 @@ namespace QifApi
 
                 AccountListLogic.Export(writer, qif.AccountListTransactions);
                 AssetLogic.Export(writer, qif.AssetTransactions);
-                BankLogic.Export(writer, qif.BankTransactions);
+                BankLogic.Export(writer, qif.BankTransactions, culture);
                 CashLogic.Export(writer, qif.CashTransactions);
                 CategoryListLogic.Export(writer, qif.CategoryListTransactions);
                 ClassListLogic.Export(writer, qif.ClassListTransactions);

@@ -1,9 +1,9 @@
-﻿using QifApi.Transactions;
-using QifApi.Transactions.Fields;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using QifApi.Transactions;
+using QifApi.Transactions.Fields;
 
 namespace QifApi.Logic
 {
@@ -42,54 +42,63 @@ namespace QifApi.Logic
 
                             // Stop processing
                             break;
+
                         case NonInvestmentAccountFields.Amount:
                             // Set the amount value
                             bt.Amount = Common.GetDecimal(sEntry.Substring(1));
 
                             // Stop processing
                             break;
+
                         case NonInvestmentAccountFields.ClearedStatus:
                             // Set the cleared status value
                             bt.ClearedStatus = sEntry.Substring(1);
 
                             // Stop processing
                             break;
+
                         case NonInvestmentAccountFields.Number:
                             // Set the number value
                             bt.Number = sEntry.Substring(1);
 
                             // Stop processing
                             break;
+
                         case NonInvestmentAccountFields.Payee:
                             // Set the payee value
                             bt.Payee = sEntry.Substring(1);
 
                             // Stop processing
                             break;
+
                         case NonInvestmentAccountFields.Memo:
                             // Set the memo value
                             bt.Memo = sEntry.Substring(1);
 
                             // Stop processing
                             break;
+
                         case NonInvestmentAccountFields.Category:
                             // Set the category value
                             bt.Category = sEntry.Substring(1);
 
                             // Stop processing
                             break;
+
                         case NonInvestmentAccountFields.Address:
                             // Add the address line value
                             bt.Address.Add(bt.Address.Count, sEntry.Substring(1));
 
                             // Stop processing
                             break;
+
                         case NonInvestmentAccountFields.SplitCategory:
                             // Add the split category value
                             bt.SplitCategories.Add(bt.SplitCategories.Count, sEntry.Substring(1));
 
                             // Stop processing
                             break;
+
                         case NonInvestmentAccountFields.SplitMemo:
                             // Add the split memo value
                             // NOTE: Using split amount count because memos are optional
@@ -97,12 +106,14 @@ namespace QifApi.Logic
 
                             // Stop processing
                             break;
+
                         case NonInvestmentAccountFields.SplitAmount:
                             // Add the split amount value
                             bt.SplitAmounts.Add(bt.SplitAmounts.Count, Common.GetDecimal(sEntry.Substring(1)));
 
                             // Stop processing
                             break;
+
                         case NonInvestmentAccountFields.EndOfEntry:
                             // Add the bank transaction instance to the collection
                             result.Add(bt);
@@ -122,22 +133,24 @@ namespace QifApi.Logic
             return result;
         }
 
-        internal static void Export(StreamWriter writer, List<BasicTransaction> list)
+        internal static void Export(StreamWriter writer, List<BasicTransaction> list, CultureInfo culture = null)
         {
+            culture = culture ?? CultureInfo.CurrentCulture;
+
             if ((list != null) && (list.Count > 0))
             {
                 writer.WriteLine(Headers.Bank);
 
                 foreach (BasicTransaction item in list)
                 {
-                    writer.WriteLine(NonInvestmentAccountFields.Date + item.Date.ToShortDateString());
+                    writer.WriteLine(NonInvestmentAccountFields.Date + item.Date.ToString("d", culture));
 
                     foreach (int i in item.Address.Keys)
                     {
                         writer.WriteLine(NonInvestmentAccountFields.Address + item.Address[i]);
                     }
 
-                    writer.WriteLine(NonInvestmentAccountFields.Amount + item.Amount.ToString(CultureInfo.CurrentCulture));
+                    writer.WriteLine(NonInvestmentAccountFields.Amount + item.Amount.ToString(culture));
 
                     if (!string.IsNullOrEmpty(item.Category))
                     {
